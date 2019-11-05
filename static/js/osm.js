@@ -21,8 +21,8 @@ function showKMLOnMap(kml) {
   mymap.fitBounds(bounds);
 }
 
-function query() {
-  return fetch("/static/result.kml")
+function query(q) {
+  return fetch(q)
     .then(res => res.text())
     .then(kmltext => {
       // Create new kml overlay
@@ -54,7 +54,12 @@ $("#get-dir").click(e => {
   let info = "src: " + srcLatLng + " dst: " + dstLatLng;
   $("p#status-text").text("Status: Processing with " + info);
   setTimeout(() => {
-    query()
+    lon1 = srcLatLng.lng
+    lat1 = srcLatLng.lat
+    lon2 = dstLatLng.lng
+    lat2 = dstLatLng.lat
+
+    query("/lon1="+lon1+"&lat1="+lat1+"&lon2="+lon2+"&lat2="+lat2)
       .then(() => {
         $("p#status-text").text("Status: Done with " + info);
       })
@@ -63,5 +68,24 @@ $("#get-dir").click(e => {
           "Status: Error with fetch API... CORS... need real webserver like Django etc"
         );
       });
-  }, 2000);
+  }, 1);
+});
+
+$("#get-dir-ll").click(e => {
+  setTimeout(() => {
+    lon1 = $('#lon1').text()
+    lat1 = $('#lat1').text()
+    lon2 = $('#lon2').text()
+    lat2 = $('#lat2').text()
+
+    query("/lon1="+lon1+"&lat1="+lat1+"&lon2="+lon2+"&lat2="+lat2)
+      .then(() => {
+        $("p#status-text").text("Status: Done");
+      })
+      .catch(() => {
+        $("p#status-text").text(
+          "Status: Error with fetch API... CORS... need real webserver like Django etc"
+        );
+      });
+  }, 1);
 });
